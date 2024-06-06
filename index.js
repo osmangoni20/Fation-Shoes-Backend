@@ -67,7 +67,7 @@ async function run() {
         const result= await ShoeCollection.findOne({_id: new ObjectId(id)});
         res.send(result);
     })
-    app.post('/add_product',verifyToken, async(req,res)=>{
+    app.post('/add_product', async(req,res)=>{
         const data= await req.body;
         const result= await ShoeCollection.insertOne(data);
         res.send(result);
