@@ -68,12 +68,14 @@ async function run() {
         res.send(result);
     })
     app.post('/add_product', async(req,res)=>{
+      
         const data= await req.body;
+        console.log(data)
         const result= await ShoeCollection.insertOne(data);
         res.send(result);
     })
     
-    app.patch('/product/:id',verifyToken, async(req,res)=>{
+    app.patch('/product/:id', async(req,res)=>{
         const UpdateData=req.body;
         const id= req.params.id;
      
@@ -81,7 +83,7 @@ async function run() {
         {$set:UpdateData});
         res.send(result);
     })
-    app.delete('/product/:id',verifyToken, async(req,res)=>{
+    app.delete('/product/:id', async(req,res)=>{
         const id=req.params.id
         const result= await ShoeCollection.deleteOne({_id: new ObjectId(id)});
         res.send(result);
