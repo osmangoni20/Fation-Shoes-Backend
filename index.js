@@ -108,6 +108,15 @@ async function run() {
       const result= await OrderCollection.find({email: email}).toArray();
       res.send(result);
   })
+  app.get('/review', async(req,res)=>{
+    const result= await ReviewCollection.find().toArray();
+    res.send(result);
+})
+  app.get('/review/:email', async(req,res)=>{
+    const email=req.params.email
+    const result= await ReviewCollection.find({email: email}).toArray();
+    res.send(result);
+})
   app.patch('/order/:email', async(req,res)=>{
     const UpdateData=req.body;
     const id= req.params.email;
