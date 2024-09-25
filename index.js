@@ -44,7 +44,7 @@ async function run() {
     const AdminDB=await client.db("AdminDB")
 
     const ShoeCollection=await database.collection("ShoeCollection")
-    const OrderCollection=await OrderDB.collection("ShoeCollection")
+    const OrderCollection=await OrderDB.collection("OrderCollection")
     const AdminCollection=await AdminDB.collection("AdminCollection")
     const UserCollection=await UserDB.collection("UserCollection");
     const ReviewCollection=await UserDB.collection("UserReview")
@@ -108,7 +108,14 @@ async function run() {
       const result= await OrderCollection.find({email: email}).toArray();
       res.send(result);
   })
-
+  app.patch('/order/:email', async(req,res)=>{
+    const UpdateData=req.body;
+    const id= req.params.email;
+    const result= await OrderCollection.updateOne({_id: new ObjectId(id)},
+    {$set:{ status: UpdateData.status}});
+  console.log(result) 
+    res.send(result);
+})
   // Review Post
   app.post('/add_review', async(req,res)=>{
     const data= await req.body;
@@ -163,7 +170,13 @@ app.get('/admin', async(req,res)=>{
   app.get('/admin/:email', async (req,res)=>{
     const email=req.params.email
     const result=await AdminCollection.findOne({email:email})
-    res.send(result)
+    if(result){
+      res.send(result)
+    }
+   else{
+    res.send(false)
+   }
+
   })
 
   // new Admin Create
