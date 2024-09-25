@@ -42,10 +42,12 @@ async function run() {
     const OrderDB=await client.db("OrderDB")
     const UserDB=await client.db("UserDB")
     const AdminDB=await client.db("AdminDB")
+
     const ShoeCollection=await database.collection("ShoeCollection")
     const OrderCollection=await OrderDB.collection("ShoeCollection")
     const AdminCollection=await AdminDB.collection("AdminCollection")
     const UserCollection=await UserDB.collection("UserCollection");
+    const ReviewCollection=await UserDB.collection("UserReview")
     app.get('/product', async(req,res)=>{
        const {searchValue,searchCategory}=req.query;
        
@@ -103,10 +105,17 @@ async function run() {
   })
     app.get('/order/:email', async(req,res)=>{
       const email=req.params.email
-      const result= await OrderCollection.find({email: email});
+      const result= await OrderCollection.find({email: email}).toArray();
       res.send(result);
   })
 
+  // Review Post
+  app.post('/add_review', async(req,res)=>{
+    const data= await req.body;
+    console.log(data)
+    const result= await ReviewCollection.insertOne(data);
+    res.send(result);
+})
 // Order Post
     app.post('/add_order', async(req,res)=>{
       const data= await req.body;
