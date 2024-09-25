@@ -151,7 +151,7 @@ app.get('/admin', async(req,res)=>{
   console.log(result)
   res.send(result);
 })
-  app.get('admin/:email', async (req,res)=>{
+  app.get('/admin/:email', async (req,res)=>{
     const email=req.params.email
     const result=await AdminCollection.findOne({email:email})
     res.send(result)
