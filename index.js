@@ -167,6 +167,7 @@ async function run() {
   app.get('/user/:email', async(req,res)=>{
     const email=req.params.email
     const result= await UserCollection.findOne({email: email});
+    console.log(result,email)
     res.send(result);
    
 })
@@ -210,13 +211,13 @@ app.get('/admin', async(req,res)=>{
      await UserCollection.insertOne(newUser);
     return res.send({token})
     })
-    app.patch('/user/:email',verifyToken, async(req,res)=>{
+    app.patch('/user/:email', async(req,res)=>{
       const UpdateData=req.body;
       const email= req.params.email;
-      
+      console.log(UpdateData,email)
       const result= await UserCollection.updateOne({email:email},
       {$set:UpdateData});
-    
+    console.log(result)
       res.send(result);
   })
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
