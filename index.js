@@ -51,22 +51,26 @@ async function run() {
     app.get('/product', async(req,res)=>{
        const {searchValue,searchCategory}=req.query;
        const queryByName={
-        pd_name:{$regex:searchValue, $options:'i'}
+        
+        pd_name:{ $regex: `${searchValue}`, $options: 'i' } 
        }
        const queryByCategory={
-        pd_category:{$regex:searchValue, $options:'i'}
+        pd_category:{ $regex: `${searchValue}`, $options: 'i' } 
        }
-       if(searchCategory!=='undefined'){
+       console.log(searchValue, searchCategory)
+       if(searchCategory==undefined&&searchValue==undefined){
+        const result= await ShoeCollection.find().toArray();
+        return res.send(result);
+       }
+       if(searchCategory!=='undefined'||searchCategory!==undefined){
         const result= await ShoeCollection.find(queryByCategory).toArray();
        return res.send(result);
        }
-       else if(searchValue){
+       else{
       const result= await ShoeCollection.find(queryByName).toArray();
-      console.log(result)
        return res.send(result);
        }
-        const result= await ShoeCollection.find().toArray();
-       return res.send(result);
+       
     })
     app.get('/product/:id', async(req,res)=>{
         const id=req.params.id
