@@ -50,20 +50,22 @@ async function run() {
     const ReviewCollection=await UserDB.collection("UserReview")
     app.get('/product', async(req,res)=>{
        const {searchValue,searchCategory}=req.query;
-       
+       console.log(searchValue)
        const queryByName={
         pd_name:{$regex:searchValue, $options:'i'}
        }
        const queryByCategory={
         pd_category:{$regex:searchValue, $options:'i'}
        }
-       if(searchCategory){
-
+       if(searchCategory!=='undefined'){
+        console.log("search Category:", searchCategory)
         const result= await ShoeCollection.find(queryByCategory).toArray();
        return res.send(result);
        }
        else if(searchValue){
+        console.log("searchValue",searchValue)
       const result= await ShoeCollection.find(queryByName).toArray();
+      console.log(result)
        return res.send(result);
        }
         const result= await ShoeCollection.find().toArray();
