@@ -62,7 +62,7 @@ async function run() {
         const result= await ShoeCollection.find().toArray();
         return res.send(result);
        }
-       if(searchCategory!=='undefined'||searchCategory!==undefined){
+       if(searchCategory!=='undefined'){
         const result= await ShoeCollection.find(queryByCategory).toArray();
        return res.send(result);
        }
