@@ -66,10 +66,10 @@ async function run() {
         const result= await ShoeCollection.find(queryByCategory).toArray();
        return res.send(result);
        }
-       else{
+      
       const result= await ShoeCollection.find(queryByName).toArray();
        return res.send(result);
-       }
+       
        
     })
     app.get('/product/:id', async(req,res)=>{
