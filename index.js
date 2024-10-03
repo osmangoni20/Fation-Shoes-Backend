@@ -120,6 +120,11 @@ async function run() {
     const result= await ReviewCollection.find({email: email}).toArray();
     res.send(result);
 })
+app.get('/pd_review/:pd_id', async(req,res)=>{
+  const pd_id=req.params.pd_id
+  const result= await ReviewCollection.find({pd_id: pd_id}).toArray();
+  res.send(result);
+})
   app.patch('/order/:email', async(req,res)=>{
     const UpdateData=req.body;
     const id= req.params.email;
