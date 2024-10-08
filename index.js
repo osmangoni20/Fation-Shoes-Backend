@@ -92,6 +92,12 @@ async function run() {
         {$set:UpdateData});
         res.send(result);
     })
+    app.post('/add_product', async(req,res)=>{
+    const data= await req.body;
+    console.log(data) 
+    const result= await ShoeCollection.insertOne(data);
+    res.send(result); 
+})
     app.delete('/product/:id', async(req,res)=>{
         const id=req.params.id
         const result= await ShoeCollection.deleteOne({_id: new ObjectId(id)});
