@@ -42,12 +42,13 @@ async function run() {
     const OrderDB=await client.db("OrderDB")
     const UserDB=await client.db("UserDB")
     const AdminDB=await client.db("AdminDB")
-
+    const MessageDB=await client.db("MessageDB")
     const ShoeCollection=await database.collection("ShoeCollection")
     const OrderCollection=await OrderDB.collection("OrderCollection")
     const AdminCollection=await AdminDB.collection("AdminCollection")
     const UserCollection=await UserDB.collection("UserCollection");
     const ReviewCollection=await UserDB.collection("UserReview")
+    const MessageCollection=await MessageDB.collection("UserMessage")
     app.get('/product', async(req,res)=>{
        const {searchValue,searchCategory}=req.query;
        const queryByName={
@@ -147,10 +148,30 @@ app.get('/pd_review/:pd_id', async(req,res)=>{
     const result= await ReviewCollection.insertOne(data);
     res.send(result);
 })
+// Get Message
+app.get('/message', async(req,res)=>{
+  const result= await MessageCollection.find().toArray();
+  res.send(result);
+})
+// Send Message
+app.post('/message', async(req,res)=>{
+  const data= await req.body;
+  console.log(data)
+  const result= await MessageCollection.insertOne({...data, status:"pending"});
+  res.send(result);
+})
+app.patch('/message/:id', async(req,res)=>{
+  const UpdateData=req.body;
+  const id= req.params.id;
+  const result= await MessageCollection.updateOne({_id: new ObjectId(id)},
+  {$set:{ status: UpdateData.status}});
+console.log(result) 
+  res.send(result);
+})
 // Order Post
     app.post('/add_order', async(req,res)=>{
       const data= await req.body;
-      console.log(data)
+   
       const result= await OrderCollection.insertOne(data);
       res.send(result);
   })
@@ -159,7 +180,7 @@ app.get('/pd_review/:pd_id', async(req,res)=>{
 
   app.post('/create-payment-intent',async(req,res)=>{
     const{price}=req.body
-    console.log(price) 
+  
     const amount=parseInt(price*100)
     const paymentIntent =await stripe.paymentIntents.create({
       amount:amount,
@@ -182,14 +203,14 @@ app.get('/pd_review/:pd_id', async(req,res)=>{
   app.get('/user/:email', async(req,res)=>{
     const email=req.params.email
     const result= await UserCollection.findOne({email: email});
-    console.log(result,email)
+
     res.send(result);
    
 })
 app.get('/admin', async(req,res)=>{
   const email=req.params.id
   const result= await AdminCollection.find().toArray();
-  console.log(result)
+
   res.send(result);
 })
   app.get('/admin/:email', async (req,res)=>{
@@ -212,7 +233,7 @@ app.get('/admin', async(req,res)=>{
   })
     app.post('/add_user', async(req,res)=>{
       const newUser=req.body;
-     
+   
       const token=createToken(newUser);
     
       const isExistUser= await UserCollection.findOne({email:newUser?.email})
@@ -229,10 +250,10 @@ app.get('/admin', async(req,res)=>{
     app.patch('/user/:email', async(req,res)=>{
       const UpdateData=req.body;
       const email= req.params.email;
-      console.log(UpdateData,email)
+    
       const result= await UserCollection.updateOne({email:email},
       {$set:UpdateData});
-    console.log(result)
+    
       res.send(result);
   })
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
