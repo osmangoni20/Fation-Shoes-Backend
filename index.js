@@ -1,12 +1,13 @@
 const express=require("express");
 const cors=require('cors');
+require('dotenv').config()
 const app=express();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 app.use(cors());
 app.use(express.json())
-const port=3000;
+const port=process.env.PORT;
 const jwt=require('jsonwebtoken');
-const uri = "mongodb+srv://osmangoni0827:osman01goni@server1.oquauxc.mongodb.net/?retryWrites=true&w=majority&appName=Server1";
+const uri = process.env.DATABASE_URL;
 const stripe=require("stripe")('sk_test_51IeMHCDxOVqYVf88dO8p5pwi5yZBPcS8GIzPSfLVjjf5jaMsuCWnxWLnPHzCY0ZiRJgfslcsfQ2L2hs486z4KxDh000gewKyow')
 const createToken=(user)=>{
   const token= jwt.sign({
