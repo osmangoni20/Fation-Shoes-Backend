@@ -5,7 +5,7 @@ const app=express();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 app.use(cors());
 app.use(express.json())
-const port=process.env.PORT;
+const port=process.env.PORT || 5000;
 const jwt=require('jsonwebtoken');
 const uri = process.env.DATABASE_URL;
 const stripe=require("stripe")('sk_test_51IeMHCDxOVqYVf88dO8p5pwi5yZBPcS8GIzPSfLVjjf5jaMsuCWnxWLnPHzCY0ZiRJgfslcsfQ2L2hs486z4KxDh000gewKyow')
@@ -33,26 +33,21 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+
 
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     // Send a ping to confirm a successful connection
-    const database= await client.db("FationShoeDB")
-    const OrderDB=await client.db("OrderDB")
-    const UserDB=await client.db("UserDB")
-    const AdminDB=await client.db("AdminDB")
-    const MessageDB=await client.db("MessageDB")
-    const ShoeCollection=await database.collection("ShoeCollection")
-    const OrderCollection=await OrderDB.collection("OrderCollection")
-    const AdminCollection=await AdminDB.collection("AdminCollection")
-    const UserCollection=await UserDB.collection("UserCollection");
-    const ReviewCollection=await UserDB.collection("UserReview")
-    const MessageCollection=await MessageDB.collection("UserMessage")
+
+    const ShoeCollection=await client.db("FationShoeDB").collection("ShoeCollection")
+    const OrderCollection=await client.db("OrderDB").collection("OrderCollection")
+    const AdminCollection=await client.db("AdminDB").collection("AdminCollection")
+    const UserCollection=await client.db("UserDB").collection("UserCollection");
+    const ReviewCollection=await client.db("UserDB").collection("UserReview")
+    const MessageCollection=await client.db("MessageDB").collection("UserMessage")
+    
     app.get('/product', async(req,res)=>{
        const {searchValue,searchCategory}=req.query;
        const queryByName={
@@ -265,9 +260,13 @@ app.get('/admin', async(req,res)=>{
     // Ensures that the client will close when you finish/error
   }
 }
-run().catch(console.log);
+run().catch(console.dir);
 
 
-app.listen(port,()=>{
-        console.log("Server Run in port ",port)
+app.get('/', (req, res) => {
+  res.send('Fation is Run')
+})
+
+app.listen(port, () => {
+  console.log(`Fation Shoe is run ${port}`);
 })
