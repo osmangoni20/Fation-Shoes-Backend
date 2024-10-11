@@ -33,6 +33,9 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 
 async function run() {
   try {
