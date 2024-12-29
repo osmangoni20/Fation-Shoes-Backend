@@ -50,6 +50,8 @@ async function run() {
     
     app.get('/product', async(req,res)=>{
        const {searchValue,searchCategory}=req.query;
+       const page=parseInt(req.query.page)
+       const size=parseInt(req.query.size)
        const queryByName={
         
         pd_name:{ $regex: `${searchValue}`, $options: 'i' } 
@@ -57,17 +59,20 @@ async function run() {
        const queryByCategory={
         pd_category:{ $regex: `${searchValue}`, $options: 'i' } 
        }
-       console.log(searchValue, searchCategory)
+
        if(searchCategory==undefined&&searchValue==undefined){
-        const result= await ShoeCollection.find().toArray();
+        const result= await ShoeCollection.find()
+        .skip(size*page).limit(size).toArray();
         return res.send(result);
        }
        if(searchCategory!=='undefined'){
-        const result= await ShoeCollection.find(queryByCategory).toArray();
+        const result= await ShoeCollection.find(queryByCategory)
+        .skip(size*page).limit(size).toArray();
        return res.send(result);
        }
       
-      const result= await ShoeCollection.find(queryByName).toArray();
+      const result= await ShoeCollection.find(queryByName)
+      .skip(size*page).limit(size).toArray();
        return res.send(result);
        
        
