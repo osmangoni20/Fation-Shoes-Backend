@@ -92,7 +92,7 @@ async function run() {
         });
       }
       if (searchCategory !== "undefined") {
-        const result = await ShoeCollection.find({isDeleted:false})
+        const result = await ShoeCollection.find(queryByCategory)
           .skip(size * page)
           .limit(size)
           .toArray();
@@ -197,7 +197,7 @@ async function run() {
         .skip(page * size)
         .limit(size)
         .toArray();
-        const totalItems=await ShoeCollection.OrderCollection()
+        const totalItems=await OrderCollection.countDocuments()
         const totalPages=Math.ceil(totalItems/size)
      return res.send({
         data:result,
@@ -209,8 +209,22 @@ async function run() {
 
     });
     app.get("/review", async (req, res) => {
-      const result = await ReviewCollection.find({isDeleted:false}).toArray();
-      res.send(result);
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+      const result = await ReviewCollection.find({isDeleted:false})
+      .skip(page * size)
+      .limit(size)
+      .toArray();
+      const totalItems=await ReviewCollection.countDocuments()
+      const totalPages=Math.ceil(totalItems/size)
+   return res.send({
+      data:result,
+      currentPage:page,
+      totalPages:totalPages,
+      totalItems:totalItems
+    });
+
+
     });
     app.get("/review/:email", async (req, res) => {
       const email = req.params.email;
