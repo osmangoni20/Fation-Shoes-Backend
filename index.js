@@ -69,20 +69,22 @@ async function run() {
       const size = parseInt(req.query.size);
       const queryByName = {
         pd_name: { $regex: `${searchValue}`, $options: "i" },
+        isDeleted:false
       };
       const queryByCategory = {
         pd_category: { $regex: `${searchValue}`, $options: "i" },
+        isDeleted:false
       };
 
       if (searchCategory == undefined && searchValue == undefined) {
-        const result = await ShoeCollection.find()
+        const result = await ShoeCollection.find({isDeleted:false})
           .skip(size * page)
           .limit(size)
           .toArray();
 
           const totalItems=await ShoeCollection.countDocuments()
           const totalPages=Math.ceil(totalItems/size)
-        return res.send({
+      return  res.send({
           data:result,
           currentPage:page,
           totalPages:totalPages,
@@ -90,13 +92,13 @@ async function run() {
         });
       }
       if (searchCategory !== "undefined") {
-        const result = await ShoeCollection.find(queryByCategory)
+        const result = await ShoeCollection.find({isDeleted:false})
           .skip(size * page)
           .limit(size)
           .toArray();
           const totalItems=await ShoeCollection.countDocuments(queryByCategory)
           const totalPages=Math.ceil(totalItems/size)
-        return res.send({
+      return  res.send({
           data:result,
           currentPage:page,
           totalPages:totalPages,
@@ -110,7 +112,7 @@ async function run() {
         .toArray();
         const totalItems=await ShoeCollection.countDocuments(queryByCategory)
         const totalPages=Math.ceil(totalItems/size)
-      return res.send({
+   return  res.send({
         data:result,
         currentPage:page,
         totalPages:totalPages,
@@ -157,13 +159,30 @@ async function run() {
       const email = req.params.email;
       const page = parseInt(req.query.page);
       const size = parseInt(req.query.size);
-      const result = await OrderCollection.find()
+      const result = await OrderCollection.find({isDeleted:false})
         .skip(size * page)
         .limit(size)
         .toArray();
         const totalItems=await OrderCollection.countDocuments()
-          const totalPages=Math.ceil(totalItems/size)
-        return res.send({
+        const totalPages=Math.ceil(totalItems/size)
+       return res.send({
+          data:result,
+          currentPage:page,
+          totalPages:totalPages,
+          totalItems:totalItems
+        });
+    });
+    app.get("/cancel-order", async (req, res) => {
+      const email = req.params.email;
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+      const result = await OrderCollection.find({isDeleted:true})
+        .skip(size * page)
+        .limit(size)
+        .toArray();
+        const totalItems=await OrderCollection.countDocuments()
+        const totalPages=Math.ceil(totalItems/size)
+       return res.send({
           data:result,
           currentPage:page,
           totalPages:totalPages,
@@ -180,7 +199,7 @@ async function run() {
         .toArray();
         const totalItems=await ShoeCollection.OrderCollection()
         const totalPages=Math.ceil(totalItems/size)
-      return res.send({
+     return res.send({
         data:result,
         currentPage:page,
         totalPages:totalPages,
@@ -190,7 +209,7 @@ async function run() {
 
     });
     app.get("/review", async (req, res) => {
-      const result = await ReviewCollection.find().toArray();
+      const result = await ReviewCollection.find({isDeleted:false}).toArray();
       res.send(result);
     });
     app.get("/review/:email", async (req, res) => {
@@ -202,6 +221,23 @@ async function run() {
       const pd_id = req.params.pd_id;
       console.log(req.params);
       const result = await ReviewCollection.find({ pd_id: pd_id }).toArray();
+      res.send(result);
+    });
+    app.patch("/review/:id", async (req, res) => {
+      const result = await ReviewCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { isDeleted: req.body.isDeleted } }
+      );
+      res.send(result);
+    });
+    app.patch("/order/:id", async (req, res) => {
+      const UpdateData = req.body;
+      const id = req.params.email;
+      const result = await OrderCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { isDeleted: UpdateData.isDeleted } }
+      );
+      console.log(result);
       res.send(result);
     });
     app.patch("/order/:email", async (req, res) => {
