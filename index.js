@@ -172,22 +172,10 @@ async function run() {
           totalItems:totalItems
         });
     });
-    app.get("/cancel-order", async (req, res) => {
-      const email = req.params.email;
-      const page = parseInt(req.query.page);
-      const size = parseInt(req.query.size);
-      const result = await OrderCollection.find({isDeleted:true})
-        .skip(size * page)
-        .limit(size)
-        .toArray();
-        const totalItems=await OrderCollection.countDocuments()
-        const totalPages=Math.ceil(totalItems/size)
-       return res.send({
-          data:result,
-          currentPage:page,
-          totalPages:totalPages,
-          totalItems:totalItems
-        });
+    app.delete("/cancel-order/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await OrderCollection.deleteOne({_id:ObjectId(id)})
+      res.send(result);
     });
     app.get("/order/:email", async (req, res) => {
       const email = req.params.email;
@@ -211,7 +199,7 @@ async function run() {
     app.get("/review", async (req, res) => {
       const page = parseInt(req.query.page);
       const size = parseInt(req.query.size);
-      const result = await ReviewCollection.find({isDeleted:false})
+      const result = await ReviewCollection.find({isDeleted:false,isServiceReview:true})
       .skip(page * size)
       .limit(size)
       .toArray();
@@ -235,6 +223,12 @@ async function run() {
       const pd_id = req.params.pd_id;
       console.log(req.params);
       const result = await ReviewCollection.find({ pd_id: pd_id }).toArray();
+      res.send(result);
+    });
+    app.delete("/review/:id", async (req, res) => {
+      const result = await ReviewCollection.deleteOne(
+        { _id: new ObjectId(id) }
+      );
       res.send(result);
     });
     app.patch("/review/:id", async (req, res) => {
@@ -268,7 +262,7 @@ async function run() {
     app.post("/add_review", async (req, res) => {
       const data = await req.body;
       console.log(data);
-      const result = await ReviewCollection.insertOne(data);
+      const result = await ReviewCollection.insertOne({...data, isDeleted:false});
       res.send(result);
     });
     // Get Message
@@ -300,7 +294,7 @@ async function run() {
     app.post("/add_order", async (req, res) => {
       const data = await req.body;
 
-      const result = await OrderCollection.insertOne(data);
+      const result = await OrderCollection.insertOne({...data, isDeleted:false});
       res.send(result);
     });
 
