@@ -150,7 +150,9 @@ async function run() {
     app.delete("/product/:id", async (req, res) => {
       const id = req.params.id;
       const result = await ShoeCollection.deleteOne({ _id: new ObjectId(id) });
+      console.log(result)
       res.send(result);
+      
     });
     // app.get('/orderStatus/:email',async(req,res)=>{
     //   const email=req.params.email
@@ -177,7 +179,14 @@ async function run() {
 
       const id = req.params.id;
       console.log(id)
-      const result = await OrderCollection.deleteOne({_id:ObjectId(id)})
+      if (!id) {
+        return res.status(400).json({ error: "Order ID is required" });
+    }
+    await OrderCollection.updateOne( { _id: new ObjectId(id)},
+    { $set: { isDeleted: true} })
+    const result = await OrderCollection.deleteOne({ _id: new ObjectId(id) });
+
+      console.log(result)
       res.send(result);
     });
     app.get("/order/:email", async (req, res) => {
